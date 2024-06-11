@@ -1,0 +1,83 @@
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/ExtraLight.otf') format('opentype');
+    font-weight: 200;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/Light.otf') format('opentype');
+    font-weight: 300;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/Regular.otf') format('opentype');
+    font-weight: 400;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/Medium.otf') format('opentype');
+    font-weight: 500;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/Bold.otf') format('opentype');
+    font-weight: 600;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/ExtraBold.otf') format('opentype');
+    font-weight: 700;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/Black.otf') format('opentype');
+    font-weight: 800;
+}
+@font-face {
+    font-family: BaileyScript;
+    src: url('./SansSerif/ExtraBlack.otf') format('opentype');
+    font-weight: 900;
+}
+
+body{
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: grid;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    font-family: BaileyScript;
+}
+
+.horizontal-scroll{
+    overflow-x: scroll;
+    overflow-y: hidden;
+    font-size: 0;
+    white-space: nowrap;
+}
+.horizontal-scroll > *{
+    display: inline-block;
+    font-size: initial;
+}
+.horizontal-scroll::-webkit-scrollbar{
+    display: none;
+}
+.horizontal-scroll::-moz-progress-bar{
+    display: none;
+}
+.horizontal-scroll.selector{
+    width: calc(100% - 1rem);
+    padding: 0 0.5rem;
+}
+.horizontal-scroll.selector button{
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+.horizontal-scroll.selector button:hover{
+    background: var(--l2);
+}
+.horizontal-scroll.selector button.active{
+    background: var(--l3);
+    color: var(--accent);
+}

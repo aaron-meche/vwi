@@ -1,0 +1,52 @@
+
+
+Import: SpeedCalculator
+
+VSplitStack: SpeedView
+    padding: 2rem
+    background: black
+    color: white
+
+    VStack
+        Text: "0"
+            size: 125pt
+            weight: 600
+
+        Text: "35 limit"
+            size: 75pt
+            weight: 500
+            opacity: 0.75
+
+    HSpreadStack: ButtonSpread
+        align: center
+        size: 25pt
+        weight: 500
+        opacity: 0.75
+
+        Text: "-5"
+        Text: "List"
+        Text: "+5"
+
+VStack
+    background: black
+    color: white
+
+    Text: Hello, world
+        padding: 2rem
+        size: 40pt
+        weight: 600
+        align: center
+        background: linear-gradient(to bottom, transparent, rgb(60, 0, 80))
+    VStack
+        padding: 0 2rem
+
+        Text: This is the future!
+            padding: 2rem 0
+            size: 25pt
+            weight: 500
+            spacing: 0.
+        IGrid
+            Text: I have developed this page using my own custom programming language, VWI
+            Text: It was originally designed to create functional user interfaces for programs 
+
+    

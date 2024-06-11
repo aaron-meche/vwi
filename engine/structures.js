@@ -49,7 +49,4 @@ const structures = {
             html.push(`<div ${gatherAttributes(true)}>${line.split(": ")[1]}</div>`)
         }
     },
-    "Icon": line => {
-        html.push(Icon(line.split(":")[1]?.trim()))
-    },
 }

@@ -24,7 +24,7 @@ VSplitStack
 
         Text: Icon("minus") + " 5"
             @class: bottomButton
-        Icon: list
+        Text: Icon("list")
             @class: bottomButton
         Text: Icon("plus") + " 5"
             @class: bottomButton
@@ -37,6 +37,6 @@ $ bottomButton
     transition: background 200ms, outline 200ms
 
 $ bottomButton:hover
-    background: rgb(20 20 20)
-    outline: solid 1pt rgb(60 60 60)
+    background: hsl(0, 0%, 10%)
+    outline: solid 1pt hsl(0, 0%, 20%)
     

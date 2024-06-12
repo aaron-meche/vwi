@@ -4,45 +4,48 @@ let codeLineSplit = []
 let codeLineIndex = 0
 let empty = ""
 let js = []
+let jsImports = []
 let html = []
 let css = []
 let view = []
 
 window.addEventListener("load", () => {
-    readTextFile("Home.vwi", text => {
+    console.time("load")
+    readTextFile("routes/Home.vwi", text => {
         code = text
         codeLineSplit = code.split("\n")
         for (let i = 0; codeLineIndex < codeLineSplit.length; codeLineIndex++) {
             translateLine(codeLineSplit[codeLineIndex], i)
         }
-        let jsStr = ""
-        let htmlStr = ""
-        let cssStr = ""
 
-        js.forEach(line => jsStr += line)
-        html.forEach(line => htmlStr += line)
-        css.forEach(line => cssStr += line)
+        jsImports.forEach(importPath => {
+            readTextFile(importPath, val => {
+                js.push(val)
+                refreshState()
+            })
+        })
 
-        let scriptElement = document.createElement("script")
-        scriptElement.textContent = jsStr
-        document.head.appendChild(scriptElement)
-
-        document.body.innerHTML = htmlStr
-        document.body.innerHTML += `<style>${cssStr}<style>`
+        document.body.innerHTML = html.join("\n")
+        document.body.innerHTML += `<style>${css.join("\n")}<style>`
+        console.timeEnd("load")
     })
 })
+
+function startTranslation() {
+
+}
 
 function readTextFile(fileName, callback) {
     let loadedFile = fileName
     let rawFile = new XMLHttpRequest()
-    rawFile.open("GET", "./routes/" + fileName, true)
+    rawFile.open("GET", "./" + fileName, true)
     rawFile.onreadystatechange = function() {
         if (rawFile.readyState === 4) callback(rawFile.responseText)
     }
     rawFile.send()
 }
 
-function translateLine(line, index) {
+function translateLine(line) {
     let lineSplit = line.trim().split(" ")
     let firstKey = lineSplit[0]?.trim()
     let secondKey = lineSplit[1]?.trim()
@@ -74,6 +77,10 @@ function translateLine(line, index) {
         html.push("</div>")
     }
     // Close Div
+    else if (firstKey == "/span") {
+        html.push("</span>")
+    }
+    // Close CSS
     else if (firstKey == "/css") {
         css.push("}")
     }
@@ -152,4 +159,54 @@ function sendClose(start, code) {
         } 
     }
     codeLineSplit.splice(insertIndex, 0, code)
+}
+
+function refreshState() {
+    let script = document.createElement("script")
+    script.textContent = js.join("\n")
+    script.type = "text/javascript";
+    document.head.appendChild(script)
+
+    evaluateEachBlocks()
+}
+
+function evaluateEachBlocks() {
+    document.querySelectorAll('[ui="each"]').forEach(eachBlock => {
+        let call = eachBlock.getAttribute("call")
+        let nick = eachBlock.getAttribute("nick")
+        let template = eachBlock.innerHTML
+        let contents = []
+        template = template.replaceAll("{", '<span ui="eval" value="').replaceAll("}", '"></span>')
+        // console.log(template)
+        try {
+            eval(call).forEach(item => {
+                let parser = new DOMParser()
+                let fakeDom = parser.parseFromString(template, 'text/html')
+                fakeDom.querySelectorAll(['[ui="eval"]']).forEach(evalCall => {
+                    evalCall.innerHTML = eval(evalCall.getAttribute("value").replaceAll(nick, "item"))
+                })
+                contents.push(fakeDom.body.innerHTML)
+            //     let copy = template
+            //     copy.querySelectorAll('[ui="eval"]').forEach(evalCall => {
+            //         try {
+            //             let html = evalCall.innerHTML
+            //             // console.log(item[evalCall.innerHTML.split(".")[1]])
+            //             evalCall.innerHTML = item[evalCall.innerHTML.split(".")[1]]
+            //             // console.log(eval(evalCall.innerHTML))
+            //         }
+            //         catch (error) {
+            //             console.error(error)
+            //         }
+            })
+                // console.log(eval("`" + template_code + "`"))
+                // template_code = template_code.replaceAll(call, call + "[" + index +"]")
+                // let script = `let ${nick} = ${JSON.stringify(item)}; ${template_code}`
+                // console.log(script)
+        //     })
+        }
+        catch (error) {
+        //     console.error(error)
+        }
+        eachBlock.innerHTML = contents.join("\n")
+    })
 }

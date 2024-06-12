@@ -3,6 +3,10 @@
     display: block
 }
 
+[ui="v-grid"] {
+    display: grid;
+}
+
 [ui="v-split-stack"]{
     display: grid;
     grid-template-rows: auto min-content;

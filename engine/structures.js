@@ -1,7 +1,7 @@
 
 const structures = {
     "View": line => {
-        html.push(`<div ${gatherAttributes()[0]} class="view ${line.includes(":") ? line.split(": ")[1] : ""}">`)
+        html.push(`<div ${gatherAttributes(true)} ui="view">`)
         sendClose(codeLineIndex, "/div")
     },
     "Define Class": line => {
@@ -10,6 +10,10 @@ const structures = {
     },
     "VStack": line => {
         html.push(`<div ${gatherAttributes(true)} ui="v-stack">`)
+        sendClose(codeLineIndex, "/div")
+    },
+    "VGrid": line => {
+        html.push(`<div ${gatherAttributes(true)} ui="v-grid">`)
         sendClose(codeLineIndex, "/div")
     },
     "VSplitStack": line => {
@@ -32,10 +36,17 @@ const structures = {
         html.push(`<div ${gatherAttributes(true)} ui="h-spread-stack">`)
         sendClose(codeLineIndex, "/div")
     },
+    "Each": line => {
+        let valWorldSplit = line.split(":")[1].trim().split(" ")
+        let callVar = valWorldSplit[0]
+        let nickVar = valWorldSplit[2]
+
+        eachBlocks.push()
+        html.push(`<span ${gatherAttributes(true)} ui="each" call="${callVar}" nick="${nickVar}">`)
+        sendClose(codeLineIndex, "/span")
+    },
     "Import": line => {
-        readTextFile(line.split(":")[1].trim() + ".js", content => {
-            eval(content)
-        })
+        jsImports.push("static/" + line.split(":")[1].trim())
     },
     "Text": line => {
         let classStr = ""
@@ -43,7 +54,7 @@ const structures = {
             classStr = line.split(":")[2].trim()
         }
         try {
-            html.push(`<div ${gatherAttributes(true)}>${eval(line.split(": ")[1])}</div>`)
+            html.push(`<div ${gatherAttributes(true)}>${eval(line.split(":")[1].trim())}</div>`)
         }
         catch (error) {
             html.push(`<div ${gatherAttributes(true)}>${line.split(": ")[1]}</div>`)

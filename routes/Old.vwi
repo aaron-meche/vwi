@@ -1,0 +1,44 @@
+
+Import: SpeedCalculator
+
+## speed: 0
+## speed_limit: 40
+
+VSplitStack
+    padding: 2rem
+    background: linear-gradient(to bottom right, rgb(20 20 20), black)
+    color: white
+
+    VStack
+        Text: 0
+            size: 125pt
+            weight: 600
+        Text: 40 limit
+            size: 75pt
+            weight: 500
+            opacity: 0.5
+    HStack
+        @class: something h-stack
+        align: center
+        size: 25pt
+        weight: 500
+        opacity: 0.5
+
+        Text: Icon("minus") + " 5"
+            @class: bottomButton
+        Text: Icon("list")
+            @class: bottomButton
+        Text: Icon("plus") + " 5"
+            @class: bottomButton
+
+
+$ bottomButton
+    padding: 2rem 0
+    border-radius: 0.5rem
+    outline: solid 1pt transparent
+    transition: background 200ms, outline 200ms
+
+$ bottomButton:hover
+    background: hsl(0, 0%, 10%)
+    outline: solid 1pt hsl(0, 0%, 20%)
+    

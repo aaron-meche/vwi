@@ -1,0 +1,32 @@
+
+Import: Songs.js
+
+VStack
+    padding: 4rem 2rem
+    background: black
+    color: white
+
+    Text: "3D Audio Player"
+        margin-bottom: 1rem
+        size: 30pt
+        weight: 600
+    Text: "Songs"
+    margin-bottom: 0.25rem
+        size: 20pt
+        weight: 600
+    
+    Each: songs as song
+        VStack
+            @class: songButton
+
+            Text: {song.title}
+                size: 16pt
+            Text: {song.artist}
+                size: 12pt
+                opacity: 0.75
+
+$ songButton
+    padding: 0.5rem 1rem
+
+$ songButton:hover
+    background: rgb(20 20 20)

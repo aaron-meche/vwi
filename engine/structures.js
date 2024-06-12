@@ -1,63 +1,89 @@
 
+function openCloseStruct(structName) {
+    html.push(`<div ${gatherAttributes(true)} ui="${structName?.trim()}">`)
+    sendClose(codeLineIndex, "/div")
+}
+
+function openCloseEachStack(stackName, line) {
+    let valWorldSplit = line.split(":")[1].trim().split(" ")
+    let callVar = valWorldSplit[0]
+    let nickVar = valWorldSplit[2]
+
+    eachBlocks.push()
+    html.push(`<div ${gatherAttributes(true)} ui="${stackName}" each call="${callVar}" nick="${nickVar}">`)
+    sendClose(codeLineIndex, "/div")
+}
+
+function TextUIElement(line, name) {
+    let text = line.substring(line.indexOf(":") + 1)
+    try {
+        html.push(`<div ui="${name}" ${gatherAttributes(true)}>${eval(text)}</div>`)
+    }
+    catch (error) { 
+        html.push(`<div ui="${name}" ${gatherAttributes(true)}>${text}</div>`)
+    }
+}
+
 const structures = {
     "View": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="view">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("view")
     },
     "Define Class": line => {
-        css.push(`.${line.trim().replaceAll(" ", "").replace("$", "")} { ${gatherAttributes()}`)
+        css.push(`.${line.replace("$", "")?.trim()} { ${gatherAttributes()}`)
         sendClose(codeLineIndex, "/css")
     },
     "VStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="v-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("v-stack")
     },
     "VGrid": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="v-grid">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("v-grid")
     },
     "VSplitStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="v-split-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("v-split-stack")
     },
     "VSpreadStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="v-spread-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("v-spread-stack")
+    },
+    "VEachStack": line => {
+        openCloseEachStack("v-each-stack", line)
     },
     "HStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="h-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("h-stack")
     },
     "HSplitStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="h-split-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("h-split-stack")
     },
     "HSpreadStack": line => {
-        html.push(`<div ${gatherAttributes(true)} ui="h-spread-stack">`)
-        sendClose(codeLineIndex, "/div")
+        openCloseStruct("h-spread-stack")
     },
-    "Each": line => {
-        let valWorldSplit = line.split(":")[1].trim().split(" ")
-        let callVar = valWorldSplit[0]
-        let nickVar = valWorldSplit[2]
-
-        eachBlocks.push()
-        html.push(`<span ${gatherAttributes(true)} ui="each" call="${callVar}" nick="${nickVar}">`)
-        sendClose(codeLineIndex, "/span")
+    "HEachStack": line => {
+        openCloseEachStack("h-each-stack", line)
     },
     "Import": line => {
         jsImports.push("static/" + line.split(":")[1].trim())
     },
-    "Text": line => {
-        let classStr = ""
-        if (line.split(":").length > 2) {
-            classStr = line.split(":")[2].trim()
-        }
+    "Image": line => {
+        let src = line.substring(line.indexOf(":") + 1)?.trim()
         try {
-            html.push(`<div ${gatherAttributes(true)}>${eval(line.split(":")[1].trim())}</div>`)
+            html.push(`<img ${gatherAttributes(true)} src="./static/${src}">`)
         }
-        catch (error) {
-            html.push(`<div ${gatherAttributes(true)}>${line.split(": ")[1]}</div>`)
+        catch (error) { 
+            html.push(`<div ui="empty-photo"</div>`)
         }
+    },
+    "Text": line => {
+        TextUIElement(line, "text")
+    },
+    "Title": line => {
+        TextUIElement(line, "title")
+    },
+    "Subtitle": line => {
+        TextUIElement(line, "subtitle")
+    },
+    "CodeStack": line => {
+        openCloseStruct("code-stack")
+    },
+    "Code": line => {
+        TextUIElement(line, "code")
     },
 }

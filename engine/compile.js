@@ -31,10 +31,6 @@ window.addEventListener("load", () => {
     })
 })
 
-function startTranslation() {
-
-}
-
 function readTextFile(fileName, callback) {
     let loadedFile = fileName
     let rawFile = new XMLHttpRequest()
@@ -96,12 +92,7 @@ function callStructure(name) {
         structures?.[name](line)
     }
     catch (error) {
-        try {
-            html.push(eval(line))
-        }
-        catch {
-            console.error(error)
-        }
+        html.push(line)
         console.error(error)
     }
 }
@@ -123,6 +114,9 @@ function gatherAttributes(rawReponse) {
     let attrAlt = codeLineSplit[codeLineIndex + 1]?.match(/^\s*/)[0].length
     for (let i = codeLineIndex + 1; i < codeLineSplit.length; i++) {
         let currAlr = codeLineSplit[i]?.match(/^\s*/)[0].length
+        let line = codeLineSplit[i].trim()
+        let key = line.split(":")[0]?.trim()
+        let value = line.split(":")[1]?.trim().replaceAll("[", "var(--").replaceAll("]", ")")
         if (codeLineSplit[i]?.replaceAll(" ", "").length == 0) continue
         if (codeLineSplit[i].trim().charAt(0) == "@") {
             attrStr += codeLineSplit[i].split(":")[0]?.trim().replace("@", "") + "="
@@ -132,9 +126,6 @@ function gatherAttributes(rawReponse) {
             i = codeLineSplit.length
         }
         else {
-            let line = codeLineSplit[i].trim()
-            let key = line.split(":")[0]?.trim()
-            let value = line.split(":")[1]?.trim()
             key = translateAttribute(key)
             styleVal += `${key}:${value};`
         }
@@ -171,42 +162,44 @@ function refreshState() {
 }
 
 function evaluateEachBlocks() {
-    document.querySelectorAll('[ui="each"]').forEach(eachBlock => {
+    document.querySelectorAll('[each]').forEach(eachBlock => {
         let call = eachBlock.getAttribute("call")
         let nick = eachBlock.getAttribute("nick")
         let template = eachBlock.innerHTML
         let contents = []
-        template = template.replaceAll("{", '<span ui="eval" value="').replaceAll("}", '"></span>')
-        // console.log(template)
+        // template = template.replaceAll("{", '<span ui="eval" value="').replaceAll("}", '"></span>').replaceAll(nick, "item")
         try {
             eval(call).forEach(item => {
-                let parser = new DOMParser()
-                let fakeDom = parser.parseFromString(template, 'text/html')
-                fakeDom.querySelectorAll(['[ui="eval"]']).forEach(evalCall => {
-                    evalCall.innerHTML = eval(evalCall.getAttribute("value").replaceAll(nick, "item"))
+                let newTemplate = template
+                let callStack = []
+                let callCount = newTemplate.split("{").length - 1
+                for (let i = 0; i < callCount; i++) {
+                    let index = newTemplate.indexOf("{") + i
+                    let evalStr = ""
+                    for (let i = index + 1; i < newTemplate.length; i++) {
+                        if (template.split("")[i] !== "}") {
+                            evalStr += template.split("")[i]
+                        }
+                        else {
+                            newTemplate = newTemplate.replace("{", "")
+                            break
+                        }
+                    }
+                    try {
+                        callStack.push([evalStr + "}", eval(evalStr.replaceAll(nick, "item"))])
+                    }
+                    catch (error) {
+                        callStack.push([evalStr + "}", "error"])
+                    }
+                }
+                // console.log(callStack)
+                callStack.forEach(call => {
+                    newTemplate = newTemplate.replace(call[0], call[1])
                 })
-                contents.push(fakeDom.body.innerHTML)
-            //     let copy = template
-            //     copy.querySelectorAll('[ui="eval"]').forEach(evalCall => {
-            //         try {
-            //             let html = evalCall.innerHTML
-            //             // console.log(item[evalCall.innerHTML.split(".")[1]])
-            //             evalCall.innerHTML = item[evalCall.innerHTML.split(".")[1]]
-            //             // console.log(eval(evalCall.innerHTML))
-            //         }
-            //         catch (error) {
-            //             console.error(error)
-            //         }
+                contents.push(newTemplate)
             })
-                // console.log(eval("`" + template_code + "`"))
-                // template_code = template_code.replaceAll(call, call + "[" + index +"]")
-                // let script = `let ${nick} = ${JSON.stringify(item)}; ${template_code}`
-                // console.log(script)
-        //     })
         }
-        catch (error) {
-        //     console.error(error)
-        }
+        catch (error) { console.error(error) }
         eachBlock.innerHTML = contents.join("\n")
     })
 }

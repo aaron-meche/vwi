@@ -1,32 +1,40 @@
 
 Import: Songs.js
 
-VStack
-    padding: 4rem 2rem
-    background: black
-    color: white
-
-    Text: "3D Audio Player"
-        margin-bottom: 1rem
-        size: 30pt
-        weight: 600
-    Text: "Songs"
-    margin-bottom: 0.25rem
-        size: 20pt
-        weight: 600
+(song) PlaySong
+    UpdateStorage("song", song)
+    OpenPage("song")
     
-    Each: songs as song
-        VStack
-            @class: songButton
 
-            Text: {song.title}
-                size: 16pt
-            Text: {song.artist}
-                size: 12pt
-                opacity: 0.75
+View
+    Title: "Your Library"
+    Subtitle: "Songs"
+    VEachStack: songs as song
+        display: grid
+        padding: 1rem 0
 
-$ songButton
-    padding: 0.5rem 1rem
+        HStack
+            @class: SongListItem
+            @onclick: ({song}) PlaySong
 
-$ songButton:hover
-    background: rgb(20 20 20)
+            Image: album_covers/{song.album}.jpg
+                height: 4rem
+                width: 4rem
+                margin-right: 1rem
+                border-radius: 0.5rem
+            VStack
+                Text: {song.title}
+                    size: 14pt
+                    weight: 500
+                Text: {song.artist}
+                    size: 12pt
+                    weight: 400
+                    opacity: 0.6
+
+$ SongListItem
+    padding: 0.5rem
+    border-radius: 0.5rem
+    cursor: pointer
+
+$ SongListItem:hover
+    background: [l1]

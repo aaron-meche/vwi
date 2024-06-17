@@ -13,16 +13,16 @@ VGrid * Display Stack
     background: linear-gradient(to bottom right, [l1], transparent)
 
     VStack * Speed Stack
-        padding-top: 0.25rem
-        padding-inline: 2rem
+        padding-top: 1.5rem
+        padding-inline: 3rem
 
-        HPushStack
+        HPushStack * Speed + Music
             Storage: "speed" * Current Speed
                 size: 100pt
                 weight: 600
                 line-height: 1
                 margin-bottom: 1rem
-            Text: Icon("music")
+            Text: Icon("music") * Music Link
                 margin-top: 1.5rem
                 margin-bottom: auto
                 padding: 2rem
@@ -33,6 +33,7 @@ VGrid * Display Stack
                 opacity: 0.6
         
         HStack * Speed Limit
+            margin-bottom: 2rem
             size: 50pt
             weight: 500
             line-height: 1
@@ -58,7 +59,7 @@ VGrid * Display Stack
             opacity: 0.6
 
             Text: Icon("minus")
-        Text: Icon("list") * List Drag Button
+        Text: Icon("list") * Menu Button
             @class: button
             display: grid
             align-items: center
@@ -74,3 +75,19 @@ VGrid * Display Stack
             opacity: 0.6
 
             Text: Icon("plus")
+
+VGrid * Left Speed Bar
+    position: fixed
+    top: 0
+    left: 0
+    height: 100vh
+    width: 0.5rem
+
+    Block * Bar
+        position: absolute
+        bottom: 0
+        left: 0
+        height: 50%
+        width: 100%
+        background: [accent]
+        border-top-right-radius: 1rem

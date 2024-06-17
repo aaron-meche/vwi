@@ -7,7 +7,7 @@
 }
 .horizontal-scroll > *{
     display: inline-block;
-    font-size: initial;
+    font-size: inherit
 }
 .horizontal-scroll::-webkit-scrollbar{
     display: none;

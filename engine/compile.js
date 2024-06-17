@@ -11,7 +11,7 @@ let view = []
 
 window.addEventListener("load", () => {
     console.time("load")
-    readTextFile("routes/Home.vwi", text => {
+    readTextFile("routes/Main.vwi", text => {
         code = text
         codeLineSplit = code.split("\n")
         for (let i = 0; codeLineIndex < codeLineSplit.length; codeLineIndex++) {
@@ -46,7 +46,6 @@ function translateLine(line) {
     let firstKey = lineSplit[0]?.trim()
     let secondKey = lineSplit[1]?.trim()
     let thirdKey = lineSplit[2]?.trim()
-    // console.log(line)
 
     // Declare Variable
     if (firstKey == "##" || firstKey == '""' || firstKey == "!!") {
@@ -55,6 +54,10 @@ function translateLine(line) {
     // Call Structure
     else if (/^[A-Z]/.test(firstKey)) {
         callStructure(firstKey.replace(":", ""))
+    }
+    // Define Span
+    else if (firstKey.includes('"') || firstKey.includes("'")) {
+        callStructure("Span")
     }
     // Call Function
     else if (firstKey == "()") {
@@ -118,7 +121,10 @@ function gatherAttributes(rawReponse) {
         let key = line.split(":")[0]?.trim()
         let value = line.split(":")[1]?.trim().replaceAll("[", "var(--").replaceAll("]", ")")
         if (codeLineSplit[i]?.replaceAll(" ", "").length == 0) continue
-        if (codeLineSplit[i].trim().charAt(0) == "@") {
+        if (codeLineSplit[i].trim().charAt(0) == "/") {
+            continue
+        }
+        else if (codeLineSplit[i].trim().charAt(0) == "@") {
             attrStr += codeLineSplit[i].split(":")[0]?.trim().replace("@", "") + "="
             attrStr += '"' + codeLineSplit[i].split(":")[1]?.trim() + '"'
         }
@@ -150,56 +156,4 @@ function sendClose(start, code) {
         } 
     }
     codeLineSplit.splice(insertIndex, 0, code)
-}
-
-function refreshState() {
-    let script = document.createElement("script")
-    script.textContent = js.join("\n")
-    script.type = "text/javascript";
-    document.head.appendChild(script)
-
-    evaluateEachBlocks()
-}
-
-function evaluateEachBlocks() {
-    document.querySelectorAll('[each]').forEach(eachBlock => {
-        let call = eachBlock.getAttribute("call")
-        let nick = eachBlock.getAttribute("nick")
-        let template = eachBlock.innerHTML
-        let contents = []
-        // template = template.replaceAll("{", '<span ui="eval" value="').replaceAll("}", '"></span>').replaceAll(nick, "item")
-        try {
-            eval(call).forEach(item => {
-                let newTemplate = template
-                let callStack = []
-                let callCount = newTemplate.split("{").length - 1
-                for (let i = 0; i < callCount; i++) {
-                    let index = newTemplate.indexOf("{") + i
-                    let evalStr = ""
-                    for (let i = index + 1; i < newTemplate.length; i++) {
-                        if (template.split("")[i] !== "}") {
-                            evalStr += template.split("")[i]
-                        }
-                        else {
-                            newTemplate = newTemplate.replace("{", "")
-                            break
-                        }
-                    }
-                    try {
-                        callStack.push([evalStr + "}", eval(evalStr.replaceAll(nick, "item"))])
-                    }
-                    catch (error) {
-                        callStack.push([evalStr + "}", "error"])
-                    }
-                }
-                // console.log(callStack)
-                callStack.forEach(call => {
-                    newTemplate = newTemplate.replace(call[0], call[1])
-                })
-                contents.push(newTemplate)
-            })
-        }
-        catch (error) { console.error(error) }
-        eachBlock.innerHTML = contents.join("\n")
-    })
 }

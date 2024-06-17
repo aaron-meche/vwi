@@ -4,6 +4,8 @@ const attributeDictionary = {
     "size": "font-size",
     "weight": "font-weight",
     "spacing": "letter-spacing",
+    "grid-row": "grid-template-rows",
+    "grid-column": "grid-template-columns",
 }
 
 function translateAttribute(key) {

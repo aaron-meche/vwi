@@ -5,6 +5,7 @@ let codeLineIndex = 0
 let empty = ""
 let js = []
 let jsImports = []
+let vwiImports = []
 let html = []
 let css = []
 let view = []
@@ -14,19 +15,29 @@ window.addEventListener("load", () => {
     readTextFile("routes/Main.vwi", text => {
         code = text
         codeLineSplit = code.split("\n")
-        for (let i = 0; codeLineIndex < codeLineSplit.length; codeLineIndex++) {
-            translateLine(codeLineSplit[codeLineIndex], i)
-        }
 
-        jsImports.forEach(importPath => {
+        vwiImports.forEach(importPath => {
             readTextFile(importPath, val => {
-                js.push(val)
+                codeLineSplit.push(val)
                 refreshState()
             })
         })
 
+        for (let i = 0; codeLineIndex < codeLineSplit.length; codeLineIndex++) {
+            translateLine(codeLineSplit[codeLineIndex], i)
+        }
+
         document.body.innerHTML = html.join("\n")
         document.body.innerHTML += `<style>${css.join("\n")}<style>`
+
+        jsImports.forEach(importPath => {
+            readTextFile(importPath, val => {
+                this.js.push(val)
+                this.refreshState()
+            })
+        })
+        this.refreshState()
+        
         console.timeEnd("load")
     })
 })
@@ -96,7 +107,6 @@ function callStructure(name) {
     }
     catch (error) {
         html.push(line)
-        console.error(error)
     }
 }
 
@@ -126,7 +136,7 @@ function gatherAttributes(rawReponse) {
         }
         else if (codeLineSplit[i].trim().charAt(0) == "@") {
             attrStr += codeLineSplit[i].split(":")[0]?.trim().replace("@", "") + "="
-            attrStr += '"' + codeLineSplit[i].split(":")[1]?.trim() + '"'
+            attrStr += "'" + codeLineSplit[i].split(":")[1]?.trim() + "'"
         }
         else if (currAlr < attrAlt || !(/^[a-z]/.test(codeLineSplit[i].trim().charAt(0)))) {
             i = codeLineSplit.length
@@ -138,7 +148,7 @@ function gatherAttributes(rawReponse) {
     }
 
     if (rawReponse) {
-        return attrStr + 'style="' + styleVal + '"'
+        return attrStr + `style="${styleVal}"`
     }
     else {
         return styleVal

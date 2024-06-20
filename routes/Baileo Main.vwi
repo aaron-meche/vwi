@@ -1,0 +1,142 @@
+
+ImportJS: "Baileo"
+
+// "" variable: "Hi"
+
+// [label, items] MediaSection
+//     Text: {label}
+//     HEachStack: items as items
+//         Text: {item.title}
+//             height: 2rem
+//             width: 10rem
+//             background: [l1]
+    
+// MediaSection
+//     @label: "Media Section"
+//     @items: tvShowList
+
+// Navigation Bar
+Grid * NavBar
+    padding: 0.5rem 2rem
+    grid-column: min-content auto min-content
+    align-items: center
+    HStack * Baileo Home Button
+        Text: "baileo"
+            size: 20pt
+            weight: 600
+
+    HStack * Center Nav Buttons
+        margin: auto
+
+        Text: "Explore"
+            @class: NavButton
+        Text: "TV Shows"
+            @class: NavButton
+        Text: "Movies"
+            @class: NavButton
+
+    HStack * Account Button
+        @class: AccountButton
+        display: flex
+        align-items: center
+
+        Block
+            height: 1rem
+            ratio: 1 / 1
+            margin-right: 0.5rem
+            background: [contrast]
+            border-radius: 100vh
+        Text: "Aaron"
+            weight: 500
+
+// Media Section
+Text: "Everything" * Section Label
+    @class: SectionHeading
+HEachStack: mediaList as media * Media Scroll
+    @class: MediaScroll
+
+    Grid * Media Item
+        @class: MediaItem
+
+        Image: thumbnails/{media.title}.jpeg
+            @class: MediaImage
+        Text: {media.title}
+            weight: 600
+        Text: {media.type}
+            weight: 500
+            opacity: 0.6
+
+// TV Show Section
+Text: "TV Shows" * Section Label
+    @class: SectionHeading
+HEachStack: tvShowList as media * Media Scroll
+    @class: MediaScroll
+
+    Grid * Media Item
+        @class: MediaItem
+
+        Image: thumbnails/{media.title}.jpeg
+            @class: MediaImage
+        Text: {media.title}
+            weight: 600
+        Text: {media.type}
+            weight: 500
+            opacity: 0.6
+
+// Movie Section
+Text: "Movies" * Section Label
+    @class: SectionHeading
+HEachStack: tvShowList as media * Media Scroll
+    @class: MediaScroll
+
+    Grid * Media Item
+        @class: MediaItem
+
+        Image: thumbnails/{media.title}.jpeg
+            @class: MediaImage
+        Text: {media.title}
+            weight: 600
+        Text: {media.type}
+            weight: 500
+            opacity: 0.6
+
+// Styles
+$ NavButton
+    padding: 1rem
+    cursor: pointer
+    border-radius: 0.5rem
+$ NavButton:hover
+    padding: 1rem
+    background: [l2]
+
+$ AccountButton
+    padding: 1rem
+    cursor: pointer
+    border-radius: 0.5rem
+$ AccountButton:hover
+    background: [l2]
+
+$ SectionHeading
+    margin-top: 2.5rem
+    padding: 0 2rem
+    size: 20pt
+    weight: 600
+
+$ MediaScroll
+    padding: 0 1rem
+
+$ MediaItem
+    width: 16rem
+    padding: 1rem
+    border-radius: 0.5rem
+$ MediaItem:hover
+    background: [l1]
+    outline: solid 2pt [l2]
+
+$ MediaImage
+    width: 100%
+    ratio: 16 / 9
+    object-fit: cover
+    margin-bottom: 0.5rem
+    border-radius: inherit
+    

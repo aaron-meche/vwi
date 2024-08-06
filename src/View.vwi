@@ -1,0 +1,16 @@
+
+ImportCSS: root
+ImportJS: script
+
+
+
+VStack
+    padding: 1.5rem
+
+    Text: VWI Framework
+        size: 28pt
+        weight: 600
+    Text: Version 1.0
+        size: 20pt
+        weight: 600
+        opacity: 0.6
